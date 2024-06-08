@@ -8,6 +8,7 @@ import firebase from "firebase/compat/app";
 //por exemplo auth de autenticação
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
+import "firebase/compat/storage";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -18,16 +19,19 @@ const firebaseConfig = {
   messagingSenderId: "588037727062",
   appId: "1:588037727062:web:c827eab9549ef277a6acf7",
   measurementId: "G-Z0TYG5EYFJ"
+
 };
+
 
 // Initialize Firebase
 let app;
 if (firebase.apps.length === 0) {
   app = firebase.initializeApp(firebaseConfig);
 } else {
-  app = firebase.app()
+  app = firebase.app();
 }
 
-const auth = firebase.auth()
-const firestore = firebase.firestore()
+const auth = firebase.auth();
+const firestore = firebase.firestore();
+const storage = firestore.storage();
 export { auth, firestore };
