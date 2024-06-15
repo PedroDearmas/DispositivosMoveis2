@@ -4,10 +4,11 @@ import { KeyboardAvoidingView, StyleSheet, Text,
          TextInput, TouchableOpacity, View } from "react-native";
 
 import { auth, firestore} from '../firebase';
+import { Cachorro } from "../model/Cachorro";
 import meuestilo from "../meuestilo";
 
-const ManterCachorro = () =>{
-    const [formCachorro, formCachorro]=
+const CachorroManter = () =>{
+    const [formCachorro, setFormCachorro]=
     useState<Partial<Cachorro>>({})
 
     const navigation = useNavigation();
@@ -24,8 +25,8 @@ const ManterCachorro = () =>{
     }
 
     return(
-        <KeyboardAvoidingView style={styles.container}>
-            <View style={styles.inputContainer}>
+        <KeyboardAvoidingView style={meuestilo.container}>
+            <View style={meuestilo.inputContainer}>
                 <TextInput 
                     placeholder="Nome"
                     value={formCachorro.nome}
@@ -33,7 +34,7 @@ const ManterCachorro = () =>{
                         ...formCachorro,
                         nome: nome
                     })}
-                    style={styles.input}
+                    style={meuestilo.input}
                 />
                 <TextInput 
                     placeholder="Sexo"
@@ -42,7 +43,7 @@ const ManterCachorro = () =>{
                         ...formCachorro,
                         nome: nome
                     })}
-                    style={styles.input}
+                    style={meuestilo.input}
                 />
                 <TextInput 
                     placeholder="Nome"
@@ -51,7 +52,7 @@ const ManterCachorro = () =>{
                         ...formCachorro,
                         nome: nome
                     })}
-                    style={styles.input}
+                    style={meuestilo.input}
                 />
                 <TextInput 
                     placeholder="Nome"
@@ -60,9 +61,10 @@ const ManterCachorro = () =>{
                         ...formCachorro,
                         nome: nome
                     })}
-                    style={styles.input}
+                    style={meuestilo.input}
                 />
             </View>
         </KeyboardAvoidingView> 
     )
 }
+export default CachorroManter;
