@@ -1,39 +1,43 @@
 export class Cachorro{
-    public id : string;
-    public nome : string;
-    public sexo : string;
+    public id       : string;
+    public nome     : string;
+    public sexo     : string;
     public datanasc : string;
-    public raca : string;
+    public raca     : string;
+    public urlfoto  : string;
 
-    construtor (obj?: Partial<Cachorro>){
-        if(obj){
-            this.id         = obj.id;
-            this.nome       = obj.nome;
-            this.sexo       = obj.sexo;
-            this.datanasc   = obj.datanasc;
-            this.raca       = obj.raca;
+    constructor(obj?: Partial<Cachorro>){
+        if (obj){
+            this.id         = obj.id
+            this.nome       = obj.nome
+            this.sexo       = obj.sexo
+            this.datanasc   = obj.datanasc
+            this.raca       = obj.raca
+            this.urlfoto    = obj.urlfoto
         }
     }
 
     toFirestore(){
         const cachorro = {
-            id : this.id,
-            nome : this.nome,
-            sexo : this.sexo,
-            datanasc : this.datanasc,
-            raca : this.raca
+            id      : this.id,
+            nome    : this.nome,
+            sexo    : this.sexo,
+            datanasc: this.datanasc,
+            raca    : this.raca,
+            urlfoto : this.urlfoto
         }
-        return cachorro;
+        return cachorro;        
     }
-    
-    toString(){
-        const Objeto = `{
+
+    toString() {
+        const objeto = `{
             "id"        : "${this.id}",
             "nome"      : "${this.nome}",
             "sexo"      : "${this.sexo}",
             "datanasc"  : "${this.datanasc}",
-            "raca"      : "${this.raca}"
+            "raca"      : "${this.raca}",
+            "urlfoto"   : "${this.urlfoto}",
         }`
-        return Objeto;
+        return objeto;
     }
-}
+};

@@ -13,25 +13,30 @@ import "firebase/compat/storage";
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyBlbE07sAWIynyZKtjRAqVvBNlrrKziaXw",
+
   authDomain: "tads-863dd.firebaseapp.com",
+
   projectId: "tads-863dd",
+
   storageBucket: "tads-863dd.appspot.com",
+
   messagingSenderId: "588037727062",
+
   appId: "1:588037727062:web:c827eab9549ef277a6acf7",
+
   measurementId: "G-Z0TYG5EYFJ"
 
 };
-
 
 // Initialize Firebase
 let app;
 if (firebase.apps.length === 0) {
   app = firebase.initializeApp(firebaseConfig);
 } else {
-  app = firebase.app();
+  app = firebase.app()
 }
 
-const auth = firebase.auth();
-const firestore = firebase.firestore();
-const storage = firebase.storage();
-export { auth, firestore,storage };
+const auth = firebase.auth()
+const firestore = firebase.firestore()
+const storage = firebase.storage()
+export { auth, firestore, storage };
