@@ -2,7 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import React, {useEffect, useState} from 'react';
 import { KeyboardAvoidingView, StyleSheet, Text, 
          TextInput, TouchableOpacity, View, Alert, 
-         Pressable} from "react-native";
+         Pressable, Image} from "react-native";
 import { auth, firestore, storage} from "../firebase";
 import meuestilo from "../meuestilo";
 import { Cachorro } from "../model/Cachorro";
@@ -20,6 +20,7 @@ const CachorroManter = () => {
 
     const cancelar = () => {
         setFormCachorro({})
+        setPickerImagePath("")
     }
 
     const salvar = async() => {
@@ -100,10 +101,15 @@ const CachorroManter = () => {
 
     return(
         <KeyboardAvoidingView style={meuestilo.container}>
-            <View style={meuestilo.inputContainer}>
-                <Pressable onPress={() => escolherFoto()}>
-                    <Text>Foto</Text>
+             <Pressable onPress={() => escolherFoto()}>
+                    {pickerImagePath === "" && (
+                        <Image style={meuestilo.imagemescolher} source={require('../assets/camera.png')}/>
+                    )}
+                    {pickerImagePath !== "" && (
+                        <Image style={meuestilo.imagemescolher} source={{uri: pickerImagePath}}/>
+                    )}
                 </Pressable>
+            <View style={meuestilo.inputContainer}>
                 <TextInput
                     placeholder="Nome"
                     value={formCachorro.nome}

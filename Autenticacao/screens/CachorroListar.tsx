@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import React, {useEffect, useState} from 'react';
-import { ActivityIndicator, KeyboardAvoidingView, StyleSheet, Text, 
+import { ActivityIndicator, Image, KeyboardAvoidingView, StyleSheet, Text, 
          TextInput, TouchableOpacity, View } from "react-native";
 import { auth, firestore, storage} from "../firebase";
 import meuestilo from "../meuestilo";
@@ -34,11 +34,19 @@ const CachorroListar = () => {
     }, [cachorros])
 
     const Item = ({ item }) => (
-        <View style={meuestilo.item}>
-            <Text style={meuestilo.title}>Nome: {item.nome}</Text>
-            <Text style={meuestilo.title}>Raca: {item.raca}</Text>
-            <Text style={meuestilo.title}>Sexo: {item.sexo}</Text>
-            <Text style={meuestilo.title}>Data Nasc: {item.datanasc}</Text>
+        <View style={meuestilo.linha}>
+            <Image
+                style={meuestilo.imagem}
+                source={{
+                    uri: item.urlfoto
+                }}
+                />
+            <View style={meuestilo.item}>
+                <Text style={meuestilo.title}>Nome: {item.nome}</Text>
+                <Text style={meuestilo.title}>Raca: {item.raca}</Text>
+                <Text style={meuestilo.title}>Sexo: {item.sexo}</Text>
+                <Text style={meuestilo.title}>Data Nasc: {item.datanasc}</Text>
+            </View>
         </View>
     );
 
