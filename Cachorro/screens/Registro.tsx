@@ -1,14 +1,14 @@
 import { useNavigation } from '@react-navigation/core'
 import React, { useState } from 'react'
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import { auth,firestore } from '../firebase'
+import { auth, firestore } from '../firebase'
 import { Usuario } from '../model/Usuario'
 
 const Registro = () => {
-  const [formUsuario, setFormUsuario]=
-  useState<Partial<Usuario>>({})
+  const [formUsuario, setFormUsuario] =
+    useState<Partial<Usuario>>({})
 
-  const refUsuario=firestore.collection("Usuario")
+  const refUsuario = firestore.collection("Usuario")
 
   const navigation = useNavigation()
 
@@ -18,19 +18,19 @@ const Registro = () => {
         formUsuario.email, formUsuario.senha)
       .then(userCredentials => {
         const user = userCredentials.user;
-       
-        const refComIdUsuario=
-        refUsuario.doc(auth.currentUser.uid);
+
+        const refComIdUsuario =
+          refUsuario.doc(auth.currentUser.uid);
 
         // const usuario=new Usuario(formUsuario)
 
         refComIdUsuario.set({
-            // usuario    
-            id: auth.currentUser.uid,
-            nome: formUsuario.nome,
-            email: formUsuario.email,
-            // senha: formUsuario.senha,
-            datanasc: formUsuario.datanasc
+          // usuario    
+          id: auth.currentUser.uid,
+          nome: formUsuario.nome,
+          email: formUsuario.email,
+          // senha: formUsuario.senha,
+          datanasc: formUsuario.datanasc
         })
 
         console.log('Registered with:', user.email);
@@ -44,18 +44,18 @@ const Registro = () => {
         placeholder="Nome"
         value={formUsuario.nome}
         onChangeText={nome => setFormUsuario({
-            ...formUsuario, 
-            nome: nome
+          ...formUsuario,
+          nome: nome
         })}
         style={styles.input}
       />
 
-    <TextInput
+      <TextInput
         placeholder="Email"
         value={formUsuario.email}
         onChangeText={email => setFormUsuario({
-            ...formUsuario, 
-            email: email
+          ...formUsuario,
+          email: email
         })}
         style={styles.input}
       />
@@ -65,8 +65,8 @@ const Registro = () => {
         secureTextEntry={true}
         value={formUsuario.senha}
         onChangeText={senha => setFormUsuario({
-            ...formUsuario, 
-            senha: senha
+          ...formUsuario,
+          senha: senha
         })}
         style={styles.input}
       />
@@ -75,11 +75,11 @@ const Registro = () => {
         placeholder="Data Nascimento"
         value={formUsuario.datanasc}
         onChangeText={datanasc => setFormUsuario({
-            ...formUsuario, 
-            datanasc: datanasc
+          ...formUsuario,
+          datanasc: datanasc
         })}
         style={styles.input}
-      />      
+      />
 
 
       <TouchableOpacity
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center'
   },
-   button: {
+  button: {
     backgroundColor: '#0782F9',
     width: '60%',
     padding: 15,

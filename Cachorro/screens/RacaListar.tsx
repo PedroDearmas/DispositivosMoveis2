@@ -1,30 +1,30 @@
 import React, { useState, useEffect } from "react";
-import {auth, firestore} from "../firebase";
+import { auth, firestore } from "../firebase";
 import meuestilo from "../meuestilo";
 import { Raca } from "../model/Raca";
-import {Text, FlatList, View, ActivityIndicator, Image} from "react-native";
+import { Text, FlatList, View, ActivityIndicator, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const ListarRacas = () => {
-    const [loading,setLoading] = useState(true);
+    const [loading, setLoading] = useState(true);
     const [racas, setRacas] = useState<Raca[]>([]);
-    const racaRef = 
-      firestore.collection('Usuario').doc(auth.currentUser?.uid)
-      .collection('Raca');
+    const racaRef =
+        firestore.collection('Usuario').doc(auth.currentUser?.uid)
+            .collection('Raca');
 
     useEffect(() => {
         const subscriber = racaRef
-        .onSnapshot((querySnapshot) => {
-            const racas = [];
-            querySnapshot.forEach((documentSnapshot) => {
-                racas.push({
-                    ...documentSnapshot.data(),
-                    key: documentSnapshot.id
+            .onSnapshot((querySnapshot) => {
+                const racas = [];
+                querySnapshot.forEach((documentSnapshot) => {
+                    racas.push({
+                        ...documentSnapshot.data(),
+                        key: documentSnapshot.id
+                    });
                 });
+                setRacas(racas);
+                setLoading(false);
             });
-            setRacas(racas);
-            setLoading(false);
-        });
         return () => subscriber();
     }, [racas])
 
@@ -41,12 +41,12 @@ const ListarRacas = () => {
             </View>
         </View>
     );
-    
+
     const renderItem = ({ item }) => <Item item={item} />
 
     return (
         <SafeAreaView style={meuestilo.containerlistar}>
-            <FlatList 
+            <FlatList
                 data={racas}
                 renderItem={renderItem}
                 keyExtractor={(item) => item.id}

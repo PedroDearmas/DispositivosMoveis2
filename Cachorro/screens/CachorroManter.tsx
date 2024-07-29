@@ -1,8 +1,10 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import { Text, Pressable, Modal, TextInput, TouchableOpacity, 
-         View, KeyboardAvoidingView, Image, Alert} from 'react-native';
-import {auth, firestore, storage} from "../firebase";
+import {
+    Text, Pressable, Modal, TextInput, TouchableOpacity,
+    View, KeyboardAvoidingView, Image, Alert
+} from 'react-native';
+import { auth, firestore, storage } from "../firebase";
 import meuestilo from "../meuestilo";
 import { Cachorro } from "../model/Cachorro";
 import * as ImagePicker from "expo-image-picker";
@@ -16,20 +18,20 @@ const ManterCachorro = (props) => {
     const [formCachorro, setFormCachorro] = useState<Partial<Cachorro>>({})
     const navigation = useNavigation();
     const [cachorros, setCachorros] = useState<Cachorro[]>([]);
-    const [loading,setLoading] = useState(true);
+    const [loading, setLoading] = useState(true);
     const [isRefreshing, setIsRefreshing] = useState(true);
 
     const [formRaca, setFormRaca] = useState<Partial<Raca>>({});
     const [modalRacaVisible, setModalRacaVisible] = useState(false);
     const racaRef = firestore.collection('Usuario').doc(auth.currentUser?.uid)
-                        .collection('Raca');
+        .collection('Raca');
 
     const [pickerImagePath, setPickerImagePath] = useState('');
 
     const cachorroRef = firestore.collection('Usuario').doc(auth.currentUser?.uid)
-                        .collection('Cachorro')
+        .collection('Cachorro')
 
-    const limparFormulario=()=>{
+    const limparFormulario = () => {
         setFormCachorro({});
         setPickerImagePath('');
     }
@@ -39,19 +41,19 @@ const ManterCachorro = (props) => {
         setPickerImagePath('');
     }
 
-    const setRaca = async(item) => {
+    const setRaca = async (item) => {
         const doc = await racaRef.doc(item.id).get();
         const raca = new Raca(doc.data());
         setFormRaca(raca);
-        setFormCachorro({...formCachorro, raca: raca.toFirestore() });
+        setFormCachorro({ ...formCachorro, raca: raca.toFirestore() });
     }
 
-    const salvar = async() => {        
+    const salvar = async () => {
         const cachorro = new Cachorro(formCachorro);
 
         console.log(cachorro.id);
 
-        if (cachorro.id === undefined){
+        if (cachorro.id === undefined) {
             const cachorroRefComId = cachorroRef.doc();
             cachorro.id = cachorroRefComId.id;
 
@@ -67,8 +69,8 @@ const ManterCachorro = (props) => {
                     limparFormulario();
                 });
         }
-        
-        
+
+
     }
 
     const escolheFoto = () => {
@@ -84,7 +86,7 @@ const ManterCachorro = (props) => {
                 {
                     text: "Abrir galeria",
                     onPress: () => showImagePicker(),
-                    style: "cancel",                    
+                    style: "cancel",
                 }
             ],
             {
@@ -96,20 +98,19 @@ const ManterCachorro = (props) => {
 
     const openCamera = async () => {
         const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
-        if (permissionResult.granted === false){
+        if (permissionResult.granted === false) {
             alert("Permissão recusada!");
             return;
         }
 
         const result = await ImagePicker.launchCameraAsync();
-        //console.log(result);
 
         enviarImagem(result);
     }
 
     const showImagePicker = async () => {
         const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (permissionResult.granted === false){
+        if (permissionResult.granted === false) {
             alert("Permissão de acesso a galeria recusada!");
             return;
         }
@@ -117,15 +118,14 @@ const ManterCachorro = (props) => {
         const result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
-            aspect: [4,3],
+            aspect: [4, 3],
             quality: 1
         });
-        //console.log(result);
         enviarImagem(result);
     }
 
-    const enviarImagem = async (result) =>{
-        if(!result.canceled){
+    const enviarImagem = async (result) => {
+        if (!result.canceled) {
             setPickerImagePath(result.assets[0].uri);
             const uploadUri = result.assets[0].uri;
             let filename = uploadUri.substring(uploadUri.lastIndexOf('/') + 1);
@@ -140,39 +140,39 @@ const ManterCachorro = (props) => {
             const fbResult = await uploadBytes(ref, bytes);
 
             const Download = await storage.ref(fbResult.metadata.fullPath).getDownloadURL();
-            setFormCachorro({... formCachorro, urlfoto: Download});
+            setFormCachorro({ ...formCachorro, urlfoto: Download });
         }
     }
 
     useEffect(() => {
         const subscriber = cachorroRef
-        .onSnapshot((querySnapshot) => {
-            const cachorros = [];
-            querySnapshot.forEach((documentSnapshot) => {
-                cachorros.push({
-                    ...documentSnapshot.data(),
-                    key: documentSnapshot.id
+            .onSnapshot((querySnapshot) => {
+                const cachorros = [];
+                querySnapshot.forEach((documentSnapshot) => {
+                    cachorros.push({
+                        ...documentSnapshot.data(),
+                        key: documentSnapshot.id
+                    });
                 });
+                setCachorros(cachorros);
+                setLoading(false);
+                setIsRefreshing(false);
             });
-            setCachorros(cachorros);
-            setLoading(false);
-            setIsRefreshing(false);
-        });
         return () => subscriber();
     }, [cachorros])
 
-    const editCachorro = async (cachorro: Cachorro) => {       
+    const editCachorro = async (cachorro: Cachorro) => {
         const result = firestore.collection('Usuario').doc(auth.currentUser?.uid)
-        .collection('Cachorro').doc(cachorro.id)
+            .collection('Cachorro').doc(cachorro.id)
             .onSnapshot(documentSnapshot => {
-                const cachorro = new Cachorro(documentSnapshot.data());                
+                const cachorro = new Cachorro(documentSnapshot.data());
                 setFormCachorro(cachorro);
-                console.log(cachorro); 
+                console.log(cachorro);
             });
         return () => result();
     }
 
-    const deleteCachorro = async(cachorro: Cachorro) => {
+    const deleteCachorro = async (cachorro: Cachorro) => {
         Alert.alert(
             `Apagar cachorro "${cachorro.nome}?" `,
             "Essa ação não pode ser desfeita!",
@@ -184,11 +184,11 @@ const ManterCachorro = (props) => {
                     text: "Excluir",
                     onPress: async () => {
                         const res = await cachorroRef.doc(cachorro.id).delete()
-                        .then(() => {
-                            alert("Cachorro " + cachorro.nome + " excluído!");
-                            limparFormulario();
-                            setIsRefreshing(true);
-                        })
+                            .then(() => {
+                                alert("Cachorro " + cachorro.nome + " excluído!");
+                                limparFormulario();
+                                setIsRefreshing(true);
+                            })
                     }
                 }
             ]
@@ -196,20 +196,20 @@ const ManterCachorro = (props) => {
     }
 
 
-    const renderCachorros = ({ item }: { item: Cachorro}) => {
+    const renderCachorros = ({ item }: { item: Cachorro }) => {
         return (
             <View style={meuestilo.item} key={item.id}>
-                <Pressable 
-                    onLongPress={() => deleteCachorro(item) }
-                    onPress={() => editCachorro(item) }
+                <Pressable
+                    onLongPress={() => deleteCachorro(item)}
+                    onPress={() => editCachorro(item)}
                 >
                     <View style={meuestilo.alinhamentoLinha}>
-                        <Image style={{ height: 80, width: 80, borderRadius: 10 }} source={{ uri: item.urlfoto}} />
+                        <Image style={{ height: 80, width: 80, borderRadius: 100 }} source={{ uri: item.urlfoto }} />
 
                         <View style={meuestilo.alinhamentoColuna}>
                             <Text style={meuestilo.title}>Nome: {item.nome}</Text>
                             {item.raca != null ?
-                                <Text style={meuestilo.title}>Raça: {item.raca.raca}</Text> : <Text style={meuestilo.title}>Raça: Não definida</Text> 
+                                <Text style={meuestilo.title}>Raça: {item.raca.raca}</Text> : <Text style={meuestilo.title}>Raça: Não definida</Text>
                             }
                             <Text style={meuestilo.title}>Sexo: {item.sexo}</Text>
                             <Text style={meuestilo.title}>Data Nasc: {item.datanasc}</Text>
@@ -221,15 +221,15 @@ const ManterCachorro = (props) => {
     }
 
 
-    return(
+    return (
         <KeyboardAvoidingView style={meuestilo.container}>
             <Pressable onPress={() => escolheFoto()}>
                 {pickerImagePath !== "" && (
-                    <Image source={{ uri: pickerImagePath }} 
+                    <Image source={{ uri: pickerImagePath }}
                         style={meuestilo.image} />
                 )}
                 {pickerImagePath === "" && (
-                    <Image source={require("../assets/camera.jpg")} 
+                    <Image source={require("../assets/camera.jpg")}
                         style={meuestilo.image} />
                 )}
             </Pressable>
@@ -241,7 +241,7 @@ const ManterCachorro = (props) => {
 
                     value={formCachorro.nome}
                     onChangeText={nome => setFormCachorro({
-                        ...formCachorro, 
+                        ...formCachorro,
                         nome: nome
                     })}
                 />
@@ -249,43 +249,43 @@ const ManterCachorro = (props) => {
                     animationType="slide"
                     transparent={true}
                     visible={modalRacaVisible}
-                    onRequestClose={() =>{
+                    onRequestClose={() => {
                         Alert.alert("Fechar modal");
                         setModalRacaVisible(!modalRacaVisible);
                     }}>
                     <View style={meuestilo.centeredView}>
                         <View style={meuestilo.modalView}>
-                            <EscolheRaca 
+                            <EscolheRaca
                                 setModalRacaVisible={setModalRacaVisible}
-                                setRaca={setRaca}    
+                                setRaca={setRaca}
                             />
                         </View>
                     </View>
                 </Modal>
-                <Pressable 
+                <Pressable
                     style={[meuestilo.buttonModal, meuestilo.buttonOpen]}
-                    onPress={() => setModalRacaVisible(true)}        
+                    onPress={() => setModalRacaVisible(true)}
                 >
                     <Text style={meuestilo.textStyle}>
                         Raça: {formCachorro.raca?.raca}
                     </Text>
                 </Pressable>
 
-                <TextInput 
+                <TextInput
                     placeholder="Sexo"
                     style={meuestilo.input}
                     value={formCachorro.sexo}
                     onChangeText={sexo => setFormCachorro({
-                        ...formCachorro, 
+                        ...formCachorro,
                         sexo: sexo
                     })}
                 />
-                <TextInput 
+                <TextInput
                     placeholder="Data Nascimento"
                     style={meuestilo.input}
                     value={formCachorro.datanasc}
                     onChangeText={datanasc => setFormCachorro({
-                        ...formCachorro, 
+                        ...formCachorro,
                         datanasc: datanasc
                     })}
                 />
@@ -296,12 +296,12 @@ const ManterCachorro = (props) => {
                     <Text style={meuestilo.buttonText}>Cancelar</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={salvar} style={[ meuestilo.button, meuestilo.buttonOutline ]}>
+                <TouchableOpacity onPress={salvar} style={[meuestilo.button, meuestilo.buttonOutline]}>
                     <Text style={meuestilo.buttonOutlineText}>Salvar</Text>
                 </TouchableOpacity>
             </View>
 
-            <FlatList 
+            <FlatList
                 data={cachorros}
                 renderItem={renderCachorros}
                 keyExtractor={item => item.id.toString()}

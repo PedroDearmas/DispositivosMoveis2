@@ -6,13 +6,12 @@ import { Raca } from "../model/Raca";
 
 
 export const EscolheRaca = (props) => {
-    const [loading, setLoading] = useState(true); // Set loading to true
-    const [racas, setRacas] = useState<Raca[]>([]); // Initial empty array
+    const [loading, setLoading] = useState(true);
+    const [racas, setRacas] = useState<Raca[]>([]);
     const [isRefreshing, setIsRefreshing] = useState(true)
 
-//  const racaRef = firestore.collection('Raca');
     const racaRef = firestore.collection('Usuario').doc(auth.currentUser?.uid)
-                        .collection('Raca');
+        .collection('Raca');
 
     useEffect(() => {
         const subscriber = racaRef
@@ -46,11 +45,8 @@ export const EscolheRaca = (props) => {
             <Pressable
                 style={({ pressed }) => [{ backgroundColor: pressed ? '#f1f1f1' : 'transparent' }, styles.listItem]}
                 onLongPress={() => { closeModal(false, item) }}
-                //onLongPress={() => deleteTipoUsuario(item)}
-                //onPress={() => { editTipoUsuario(item) }}
                 onPress={() => { closeModal(false, item) }}
             >
-                {/* <Image source={{ uri: item.imageUri }} style={styles.itemImage} /> */}
                 <View>
                     <Text>ID: {item.id}</Text>
                     <Text>Raça: {item.raca}</Text>

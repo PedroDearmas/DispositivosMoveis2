@@ -1,8 +1,10 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
-import { Text, Pressable, Modal, TextInput, TouchableOpacity, 
-         View, KeyboardAvoidingView, Image, Alert} from 'react-native';
-import {auth, firestore, storage} from "../firebase";
+import {
+    Text, Pressable, Modal, TextInput, TouchableOpacity,
+    View, KeyboardAvoidingView, Image, Alert
+} from 'react-native';
+import { auth, firestore, storage } from "../firebase";
 import meuestilo from "../meuestilo";
 import { Raca } from "../model/Raca";
 import { FlatList } from "react-native-gesture-handler";
@@ -11,14 +13,14 @@ const ManterRaca = (props) => {
     const [formRaca, setFormRaca] = useState<Partial<Raca>>({})
     const navigation = useNavigation();
     const [racas, setRacas] = useState<Raca[]>([]);
-    const [loading,setLoading] = useState(true);
+    const [loading, setLoading] = useState(true);
     const [isRefreshing, setIsRefreshing] = useState(true);
 
 
     const racaRef = firestore.collection('Usuario').doc(auth.currentUser?.uid)
-                        .collection('Raca')
+        .collection('Raca')
 
-    const limparFormulario=()=>{
+    const limparFormulario = () => {
         setFormRaca({});
     }
 
@@ -26,12 +28,12 @@ const ManterRaca = (props) => {
         setFormRaca({});
     }
 
-    const salvar = async() => {        
+    const salvar = async () => {
         const raca = new Raca(formRaca);
 
         console.log(raca.id);
 
-        if (raca.id === undefined){ // PARAMOS AQUI
+        if (raca.id === undefined) { // PARAMOS AQUI
             const racaRefComId = racaRef.doc();
             raca.id = racaRefComId.id;
 
@@ -47,39 +49,39 @@ const ManterRaca = (props) => {
                     limparFormulario();
                 });
         }
-        
-        
+
+
     }
 
     useEffect(() => {
         const subscriber = racaRef
-        .onSnapshot((querySnapshot) => {
-            const racas = [];
-            querySnapshot.forEach((documentSnapshot) => {
-                racas.push({
-                    ...documentSnapshot.data(),
-                    key: documentSnapshot.id
+            .onSnapshot((querySnapshot) => {
+                const racas = [];
+                querySnapshot.forEach((documentSnapshot) => {
+                    racas.push({
+                        ...documentSnapshot.data(),
+                        key: documentSnapshot.id
+                    });
                 });
+                setRacas(racas);
+                setLoading(false);
+                setIsRefreshing(false);
             });
-            setRacas(racas);
-            setLoading(false);
-            setIsRefreshing(false);
-        });
         return () => subscriber();
     }, [racas])
 
-    const editRaca = async (raca: Raca) => {       
+    const editRaca = async (raca: Raca) => {
         const result = firestore.collection('Usuario').doc(auth.currentUser?.uid)
-        .collection('Raca').doc(raca.id)
+            .collection('Raca').doc(raca.id)
             .onSnapshot(documentSnapshot => {
-                const raca = new Raca(documentSnapshot.data());                
+                const raca = new Raca(documentSnapshot.data());
                 setFormRaca(raca);
-                console.log(raca); 
+                console.log(raca);
             });
         return () => result();
     }
 
-    const deleteRaca = async(raca: Raca) => {
+    const deleteRaca = async (raca: Raca) => {
         Alert.alert(
             `Apagar raca "${raca.raca}?" `,
             "Essa ação não pode ser desfeita!",
@@ -91,11 +93,11 @@ const ManterRaca = (props) => {
                     text: "Excluir",
                     onPress: async () => {
                         const res = await racaRef.doc(raca.id).delete()
-                        .then(() => {
-                            alert("Raca " + raca.raca + " excluído!");
-                            limparFormulario();
-                            setIsRefreshing(true);
-                        })
+                            .then(() => {
+                                alert("Raca " + raca.raca + " excluído!");
+                                limparFormulario();
+                                setIsRefreshing(true);
+                            })
                     }
                 }
             ]
@@ -103,12 +105,12 @@ const ManterRaca = (props) => {
     }
 
 
-    const renderRacas = ({ item }: { item: Raca}) => {
+    const renderRacas = ({ item }: { item: Raca }) => {
         return (
             <View style={meuestilo.item} key={item.id}>
-                <Pressable 
-                    onLongPress={() => deleteRaca(item) }
-                    onPress={() => editRaca(item) }
+                <Pressable
+                    onLongPress={() => deleteRaca(item)}
+                    onPress={() => editRaca(item)}
                 >
                     <View style={meuestilo.alinhamentoLinha}>
                         <View style={meuestilo.alinhamentoColuna}>
@@ -121,17 +123,17 @@ const ManterRaca = (props) => {
     }
 
 
-    return(
+    return (
         <KeyboardAvoidingView style={meuestilo.container}>
-           
+
 
             <View style={meuestilo.inputContainer}>
-                <TextInput 
+                <TextInput
                     placeholder="Raca"
                     style={meuestilo.input}
                     value={formRaca.raca}
                     onChangeText={raca => setFormRaca({
-                        ...formRaca, 
+                        ...formRaca,
                         raca: raca
                     })}
                 />
@@ -142,12 +144,12 @@ const ManterRaca = (props) => {
                     <Text style={meuestilo.buttonText}>Cancelar</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={salvar} style={[ meuestilo.button, meuestilo.buttonOutline ]}>
+                <TouchableOpacity onPress={salvar} style={[meuestilo.button, meuestilo.buttonOutline]}>
                     <Text style={meuestilo.buttonOutlineText}>Salvar</Text>
                 </TouchableOpacity>
             </View>
 
-            <FlatList 
+            <FlatList
                 data={racas}
                 renderItem={renderRacas}
                 keyExtractor={item => item.id.toString()}

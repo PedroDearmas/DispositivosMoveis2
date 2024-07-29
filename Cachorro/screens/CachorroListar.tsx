@@ -1,30 +1,30 @@
 import React, { useState, useEffect } from "react";
-import {auth, firestore} from "../firebase";
+import { auth, firestore } from "../firebase";
 import meuestilo from "../meuestilo";
 import { Cachorro } from "../model/Cachorro";
-import {Text, FlatList, View, ActivityIndicator, Image} from "react-native";
+import { Text, FlatList, View, ActivityIndicator, Image } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const ListarCachorros = () => {
-    const [loading,setLoading] = useState(true);
+    const [loading, setLoading] = useState(true);
     const [cachorros, setCachorros] = useState<Cachorro[]>([]);
-    const cachorroRef = 
-      firestore.collection('Usuario').doc(auth.currentUser?.uid)
-      .collection('Cachorro');
+    const cachorroRef =
+        firestore.collection('Usuario').doc(auth.currentUser?.uid)
+            .collection('Cachorro');
 
     useEffect(() => {
         const subscriber = cachorroRef
-        .onSnapshot((querySnapshot) => {
-            const cachorros = [];
-            querySnapshot.forEach((documentSnapshot) => {
-                cachorros.push({
-                    ...documentSnapshot.data(),
-                    key: documentSnapshot.id
+            .onSnapshot((querySnapshot) => {
+                const cachorros = [];
+                querySnapshot.forEach((documentSnapshot) => {
+                    cachorros.push({
+                        ...documentSnapshot.data(),
+                        key: documentSnapshot.id
+                    });
                 });
+                setCachorros(cachorros);
+                setLoading(false);
             });
-            setCachorros(cachorros);
-            setLoading(false);
-        });
         return () => subscriber();
     }, [cachorros])
 
@@ -35,7 +35,7 @@ const ListarCachorros = () => {
     const Item = ({ item }) => (
         <View style={meuestilo.item} >
             <View style={meuestilo.alinhamentoLinha}>
-                <Image style={{ height: 80, width: 80, borderRadius: 10 }} source={{ uri: item.urlfoto}} />
+                <Image style={{ height: 80, width: 80, borderRadius: 10 }} source={{ uri: item.urlfoto }} />
 
                 <View style={meuestilo.alinhamentoColuna}>
                     <Text style={meuestilo.title}>Nome: {item.nome}</Text>
@@ -46,25 +46,18 @@ const ListarCachorros = () => {
             </View>
         </View>
     );
-    
+
     const renderItem = ({ item }) => <Item item={item} />
 
     return (
         <SafeAreaView style={meuestilo.containerlistar}>
-            <FlatList 
+            <FlatList
                 data={cachorros}
                 renderItem={renderItem}
                 keyExtractor={(item) => item.id}
             />
         </SafeAreaView>
     );
-
-
-
-
-
-
-
 }
 
 export default ListarCachorros;
